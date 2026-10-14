@@ -1,0 +1,15 @@
+{
+  "name": "HydroCare",
+  "short_name": "HydroCare",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f0faff",
+  "theme_color": "#4fc3f7",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3105/3105807.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
