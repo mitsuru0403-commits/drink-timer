@@ -2,140 +2,134 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HydroCare</title>
-    <!-- PWA設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HydroCare Pro</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4fc3f7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon-192.png">
-
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3105/3105807.png">
     <style>
-        /* CSSは前回と同じ（省略せずに全て含めています） */
         :root {
-            --main-blue: #4fc3f7;
-            --dark-blue: #0288d1;
-            --bg-color: #f0faff;
-            --card-bg: #ffffff;
-            --text-color: #37474f;
-            --accent-orange: #ff9800;
+            --main-blue: #4fc3f7; --dark-blue: #0288d1; --bg-color: #f0faff;
+            --card-bg: #ffffff; --text-color: #37474f; --accent-orange: #ff9800;
         }
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0; padding: 20px 0;
-            display: flex; flex-direction: column; align-items: center;
-            -webkit-user-select: none; /* スマホでの誤選択防止 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color); color: var(--text-color);
+            margin: 0; padding: 20px 0; display: flex; flex-direction: column; align-items: center;
         }
-        .container, .calendar-card, .settings-card {
-            background-color: var(--card-bg); padding: 1.5rem; border-radius: 20px;
+        .card {
+            background: var(--card-bg); padding: 1.5rem; border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05); width: 90%; max-width: 450px;
             margin-bottom: 20px; box-sizing: border-box;
         }
-        h1 { color: var(--dark-blue); margin: 0 0 1rem 0; font-size: 1.4rem; text-align: center; }
-        h2 { font-size: 1rem; color: var(--dark-blue); margin-top: 0; border-left: 4px solid var(--main-blue); padding-left: 8px; }
-        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
-        .input-group { display: flex; flex-direction: column; }
-        .input-group label { font-size: 0.75rem; color: #78909c; margin-bottom: 4px; }
+        h1 { color: var(--dark-blue); margin: 0 0 1rem; font-size: 1.4rem; text-align: center; }
+        h2 { font-size: 0.9rem; color: var(--dark-blue); margin: 0 0 10px; border-left: 4px solid var(--main-blue); padding-left: 8px; }
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .input-group { display: flex; flex-direction: column; margin-bottom: 10px; }
+        .input-group label { font-size: 0.7rem; color: #78909c; margin-bottom: 2px; }
         .input-group input { padding: 8px; border: 1px solid #cfd8dc; border-radius: 8px; font-size: 0.9rem; }
-        .progress-info { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: bold; font-size: 0.9rem;}
-        .progress-bar-bg { background-color: #eee; border-radius: 10px; height: 12px; overflow: hidden; margin-bottom: 20px;}
-        .progress-bar-fill { background-color: var(--main-blue); height: 100%; width: 0%; transition: width 0.5s ease-out; }
-        .timer-card { background: linear-gradient(135deg, #4fc3f7, #0288d1); color: white; padding: 1.5rem; border-radius: 15px; text-align: center; margin-bottom: 15px; }
-        .timer-label { font-size: 0.8rem; opacity: 0.9; }
-        .timer-display { font-size: 2.8rem; font-weight: bold; margin: 5px 0; }
-        .next-time-info { font-size: 0.9rem; font-weight: bold; }
+        .timer-card { background: linear-gradient(135deg, #4fc3f7, #0288d1); color: white; padding: 1.2rem; border-radius: 15px; text-align: center; margin-bottom: 15px; }
+        .timer-display { font-size: 3rem; font-weight: bold; margin: 5px 0; }
+        .progress-bar-bg { background: #eee; border-radius: 10px; height: 12px; overflow: hidden; margin: 10px 0; }
+        .progress-bar-fill { background: var(--main-blue); height: 100%; width: 0%; transition: width 0.5s; }
         .drink-btn {
-            background-color: var(--accent-orange); color: white; border: none; padding: 1rem;
+            background: var(--accent-orange); color: white; border: none; padding: 1rem;
             font-size: 1.2rem; border-radius: 50px; cursor: pointer; width: 100%;
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); font-weight: bold; transition: transform 0.1s;
+            font-weight: bold; box-shadow: 0 4px 15px rgba(255,152,0,0.3);
         }
-        .drink-btn:active { transform: scale(0.95); }
-        .celebration { color: var(--dark-blue); font-weight: bold; display: none; text-align: center; margin: 10px 0; animation: bounce 1s infinite; }
         .schedule-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-top: 10px; }
-        .schedule-item { font-size: 0.7rem; background: #f5f5f5; padding: 6px 2px; border-radius: 6px; text-align: center; color: #999; border: 1px solid transparent; }
-        .schedule-item.next { background: #e3f2fd; color: var(--dark-blue); font-weight: bold; border-color: var(--main-blue); }
+        .schedule-item { font-size: 0.7rem; background: #f5f5f5; padding: 6px 2px; border-radius: 6px; text-align: center; color: #999; }
+        .schedule-item.next { background: #e3f2fd; color: var(--dark-blue); font-weight: bold; border: 1px solid var(--main-blue); }
         .schedule-item.done { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-        .calendar-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border-radius: 5px; font-size: 0.75rem; cursor: pointer; border: 1px solid #f9f9f9; position: relative; }
-        .calendar-day.today { border: 1px solid var(--main-blue); font-weight: bold; }
-        .goal-dot { width: 5px; height: 5px; background-color: var(--main-blue); border-radius: 50%; position: absolute; bottom: 2px; }
-        .log-detail { margin-top: 10px; font-size: 0.8rem; color: #666; background: #f9f9f9; padding: 10px; border-radius: 8px; min-height: 20px; text-align: center; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 0.7rem; }
+        .calendar-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid #f9f9f9; }
+        .goal-dot { width: 4px; height: 4px; background: var(--main-blue); border-radius: 50%; position: absolute; bottom: 2px; }
+        .notify-test { background: none; border: 1px solid #ccc; color: #999; padding: 5px; font-size: 0.6rem; border-radius: 5px; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="settings-card">
-        <h2>⚙️ マイ設定</h2>
-        <div class="settings-grid">
-            <div class="input-group"><label>開始時刻</label><input type="time" id="start-time" value="06:00"></div>
-            <div class="input-group"><label>終了時刻</label><input type="time" id="end-time" value="22:00"></div>
-            <div class="input-group"><label>1日の目標 (ml)</label><input type="number" id="goal-ml" value="2000"></div>
-            <div class="input-group"><label>1回の量 (ml)</label><input type="number" id="serving-ml" value="200"></div>
-        </div>
+<div class="card">
+    <h2>⚙️ 設定</h2>
+    <div class="settings-grid">
+        <div class="input-group"><label>開始</label><input type="time" id="start-time" value="06:00"></div>
+        <div class="input-group"><label>終了</label><input type="time" id="end-time" value="22:00"></div>
+        <div class="input-group"><label>目標(ml)</label><input type="number" id="goal-ml" value="2000"></div>
+        <div class="input-group"><label>1回(ml)</label><input type="number" id="serving-ml" value="200"></div>
     </div>
+</div>
 
-    <div class="container">
-        <h1>💧 HydroCare</h1>
-        <div class="progress-section">
-            <div class="progress-info"><span id="label-goal-display">目標: 2000ml</span><span id="progress-text">0 / 2000 ml</span></div>
-            <div class="progress-bar-bg"><div id="progress-bar" class="progress-bar-fill"></div></div>
-        </div>
-        <div class="timer-card">
-            <div class="timer-label" id="timer-status">次の給水まで</div>
-            <div id="timer-display" class="timer-display">--:--</div>
-            <div id="next-time-info" class="next-time-info">予定時刻 --:--</div>
-        </div>
-        <div id="celebration" class="celebration">✨ 目標達成！ ✨</div>
-        <button id="drink-btn" class="drink-btn">水を飲んだ！ (<span id="btn-serving-text">200</span>ml)</button>
-        <div id="schedule-list" class="schedule-list"></div>
+<div class="card">
+    <h1>💧 HydroCare</h1>
+    <div class="timer-card">
+        <div id="timer-status" style="font-size:0.8rem">次の給水まで</div>
+        <div id="timer-display" class="timer-display">--:--</div>
+        <div id="next-time-info" style="font-size:0.8rem; font-weight:bold;">予定 --:--</div>
     </div>
+    <div class="progress-info" style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;">
+        <span>進捗</span><span id="progress-text">0 / 2000 ml</span>
+    </div>
+    <div class="progress-bar-bg"><div id="progress-bar" class="progress-bar-fill"></div></div>
+    <button id="drink-btn" class="drink-btn">水を飲んだ！</button>
+    <div id="schedule-list" class="schedule-list"></div>
+    <center><button class="notify-test" onclick="sendNotification('通知テスト', 'このように通知が届きます')">通知テスト送信</button></center>
+</div>
 
-    <div class="calendar-card">
-        <div class="calendar-header">
-            <button onclick="changeMonth(-1)">◀</button>
-            <strong id="calendar-month"></strong>
-            <button onclick="changeMonth(1)">▶</button>
-        </div>
-        <div class="calendar-grid" id="calendar-grid"></div>
-        <div id="log-detail" class="log-detail"></div>
-    </div>
+<div class="card">
+    <div id="calendar-month" style="text-align:center; font-weight:bold; margin-bottom:10px; font-size:0.9rem;"></div>
+    <div class="calendar-grid" id="calendar-grid"></div>
+</div>
 
 <script>
-    // 1. Service Worker の登録
+    // --- PWA & 通知設定 ---
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(() => console.log('Service Worker Registered'));
+        navigator.serviceWorker.register('service-worker.js');
     }
 
-    // --- ロジック部分は前回と同じ（ここからJS） ---
-    let logs = JSON.parse(localStorage.getItem('water_logs_custom')) || {};
-    let config = JSON.parse(localStorage.getItem('water_config')) || { startTime: "06:00", endTime: "22:00", goal: 2000, serving: 200 };
+    async function requestPermission() {
+        if ('Notification' in window) {
+            await Notification.requestPermission();
+        }
+    }
+
+    function sendNotification(title, body) {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'NOTIFY', title, body });
+        }
+    }
+
+    // --- ロジック ---
+    let logs = JSON.parse(localStorage.getItem('water_logs_pwa')) || {};
+    let config = JSON.parse(localStorage.getItem('water_config_pwa')) || { startTime: "06:00", endTime: "22:00", goal: 2000, serving: 200 };
     let schedule = [];
-    let currentViewDate = new Date();
-    const fields = ['start-time', 'end-time', 'goal-ml', 'serving-ml'];
+    let lastNotifiedIndex = -1; // 同じ時間に何度も通知しないためのガード
 
     function init() {
+        requestPermission();
         document.getElementById('start-time').value = config.startTime;
         document.getElementById('end-time').value = config.endTime;
         document.getElementById('goal-ml').value = config.goal;
         document.getElementById('serving-ml').value = config.serving;
+        
         refreshAll();
         setInterval(updateTimer, 1000);
+        
+        // 設定変更イベント
+        ['start-time', 'end-time', 'goal-ml', 'serving-ml'].forEach(id => {
+            document.getElementById(id).onchange = refreshAll;
+        });
     }
 
     function refreshAll() {
-        config.startTime = document.getElementById('start-time').value;
-        config.endTime = document.getElementById('end-time').value;
-        config.goal = parseInt(document.getElementById('goal-ml').value) || 2000;
-        config.serving = parseInt(document.getElementById('serving-ml').value) || 200;
-        localStorage.setItem('water_config', JSON.stringify(config));
-        document.getElementById('label-goal-display').innerText = `目標: ${config.goal}ml`;
-        document.getElementById('btn-serving-text').innerText = config.serving;
+        config = {
+            startTime: document.getElementById('start-time').value,
+            endTime: document.getElementById('end-time').value,
+            goal: parseInt(document.getElementById('goal-ml').value),
+            serving: parseInt(document.getElementById('serving-ml').value)
+        };
+        localStorage.setItem('water_config_pwa', JSON.stringify(config));
         calculateSchedule();
         updateUI();
         renderScheduleUI();
@@ -145,104 +139,100 @@
     function calculateSchedule() {
         const [sH, sM] = config.startTime.split(':').map(Number);
         const [eH, eM] = config.endTime.split(':').map(Number);
-        const startTotalMin = sH * 60 + sM;
-        const endTotalMin = eH * 60 + eM;
-        let duration = endTotalMin - startTotalMin;
-        if (duration <= 0) duration = 60;
+        const startMin = sH * 60 + sM;
+        const endMin = eH * 60 + eM;
         const steps = Math.ceil(config.goal / config.serving);
-        const interval = steps > 1 ? duration / (steps - 1) : 0;
+        const interval = steps > 1 ? (endMin - startMin) / (steps - 1) : 0;
+
         schedule = [];
         for (let i = 0; i < steps; i++) {
-            const timeInMin = startTotalMin + (interval * i);
-            const d = new Date();
-            d.setHours(Math.floor(timeInMin / 60), Math.floor(timeInMin % 60), 0, 0);
-            schedule.push(d);
+            const time = new Date();
+            const m = startMin + (interval * i);
+            time.setHours(Math.floor(m / 60), Math.floor(m % 60), 0, 0);
+            schedule.push(time);
         }
     }
 
     function updateTimer() {
         const now = new Date();
-        const todayStr = getTodayStr();
-        const drankAmount = logs[todayStr] || 0;
-        const drankCount = Math.floor(drankAmount / config.serving);
-        if (drankAmount >= config.goal) {
-            document.getElementById('timer-status').innerText = "目標達成！";
+        const today = new Date().toLocaleString('sv').split(' ')[0];
+        const drankCount = Math.floor((logs[today] || 0) / config.serving);
+        
+        if (drankCount >= schedule.length) {
             document.getElementById('timer-display').innerText = "DONE";
             return;
         }
-        const nextTarget = schedule[drankCount] || schedule[schedule.length - 1];
-        const diffMs = nextTarget - now;
-        if (diffMs > 0) {
-            const mins = Math.floor(diffMs / 60000);
-            const secs = Math.floor((diffMs % 60000) / 1000);
-            document.getElementById('timer-display').innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+        const nextTarget = schedule[drankCount];
+        const diff = nextTarget - now;
+
+        // --- 通知ロジック ---
+        // 予定時刻になり、かつ、まだこの回の通知を送っていない場合
+        if (diff <= 0 && lastNotifiedIndex !== drankCount) {
+            sendNotification("水分補給の時間です！", `予定時刻(${nextTarget.getHours()}:${nextTarget.getMinutes().toString().padStart(2,'0')})を過ぎました。${config.serving}ml飲みましょう！`);
+            lastNotifiedIndex = drankCount;
+        }
+
+        if (diff > 0) {
+            const mins = Math.floor(diff / 60000);
+            const secs = Math.floor((diff % 60000) / 1000);
+            document.getElementById('timer-display').innerText = `${mins}:${secs.toString().padStart(2,'0')}`;
+            document.getElementById('timer-status').innerText = "次の給水まで";
         } else {
             document.getElementById('timer-display').innerText = "00:00";
+            document.getElementById('timer-status').innerText = "給水タイム！";
         }
-        document.getElementById('next-time-info').innerText = `予定時刻 ${nextTarget.getHours()}:${nextTarget.getMinutes().toString().padStart(2,'0')}`;
+        document.getElementById('next-time-info').innerText = `予定 ${nextTarget.getHours()}:${nextTarget.getMinutes().toString().padStart(2,'0')}`;
     }
 
     function updateUI() {
-        const today = getTodayStr();
+        const today = new Date().toLocaleString('sv').split(' ')[0];
         const current = logs[today] || 0;
         const percent = Math.min((current / config.goal) * 100, 100);
         document.getElementById('progress-bar').style.width = percent + '%';
         document.getElementById('progress-text').innerText = `${current} / ${config.goal} ml`;
-        document.getElementById('celebration').style.display = current >= config.goal ? 'block' : 'none';
     }
 
     function renderScheduleUI() {
-        const container = document.getElementById('schedule-list');
-        const drankCount = Math.floor((logs[getTodayStr()] || 0) / config.serving);
-        container.innerHTML = '';
-        schedule.forEach((time, index) => {
-            const item = document.createElement('div');
-            item.className = 'schedule-item';
-            if (index < drankCount) item.classList.add('done');
-            else if (index === drankCount) item.classList.add('next');
-            item.innerText = `${time.getHours()}:${time.getMinutes().toString().padStart(2,'0')}`;
-            container.appendChild(item);
+        const list = document.getElementById('schedule-list');
+        const today = new Date().toLocaleString('sv').split(' ')[0];
+        const drankCount = Math.floor((logs[today] || 0) / config.serving);
+        list.innerHTML = '';
+        schedule.forEach((time, i) => {
+            const div = document.createElement('div');
+            div.className = `schedule-item ${i < drankCount ? 'done' : (i === drankCount ? 'next' : '')}`;
+            div.innerText = `${time.getHours()}:${time.getMinutes().toString().padStart(2,'0')}`;
+            list.appendChild(div);
         });
     }
 
     document.getElementById('drink-btn').onclick = () => {
-        const today = getTodayStr();
+        const today = new Date().toLocaleString('sv').split(' ')[0];
         logs[today] = (logs[today] || 0) + config.serving;
-        localStorage.setItem('water_logs_custom', JSON.stringify(logs));
+        localStorage.setItem('water_logs_pwa', JSON.stringify(logs));
         refreshAll();
     };
 
-    fields.forEach(id => document.getElementById(id).onchange = refreshAll);
-    function getTodayStr() { return new Date().toLocaleString('sv').split(' ')[0]; }
-
     function renderCalendar() {
-        const year = currentViewDate.getFullYear();
-        const month = currentViewDate.getMonth();
-        document.getElementById('calendar-month').innerText = `${year}年 ${month + 1}月`;
+        const now = new Date();
+        document.getElementById('calendar-month').innerText = `${now.getFullYear()}年 ${now.getMonth()+1}月`;
         const grid = document.getElementById('calendar-grid');
         grid.innerHTML = '';
-        const firstDay = new Date(year, month, 1).getDay();
-        const lastDate = new Date(year, month + 1, 0).getDate();
-        for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
-        for (let date = 1; date <= lastDate; date++) {
-            const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
-            const dayEl = document.createElement('div');
-            dayEl.className = 'calendar-day';
-            if (dateStr === getTodayStr()) dayEl.classList.add('today');
-            dayEl.innerText = date;
-            if (logs[dateStr] && logs[dateStr] >= config.goal) {
+        const lastDate = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+        for (let d = 1; d <= lastDate; d++) {
+            const dateStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+            const el = document.createElement('div');
+            el.className = 'calendar-day';
+            el.innerText = d;
+            if (logs[dateStr] >= config.goal) {
                 const dot = document.createElement('div');
                 dot.className = 'goal-dot';
-                dayEl.appendChild(dot);
+                el.appendChild(dot);
             }
-            dayEl.onclick = () => {
-                const amt = logs[dateStr] || 0;
-                document.getElementById('log-detail').innerText = `${month+1}/${date}: ${amt}ml`;
-            };
-            grid.appendChild(dayEl);
+            grid.appendChild(el);
         }
     }
-    function changeMonth(diff) { currentViewDate.setMonth(currentViewDate.getMonth() + diff); renderCalendar(); }
+
     init();
 </script>
 </body>
